@@ -1,4 +1,4 @@
-rootProject.name = "OrbMotion"
+rootProject.name = "OrbMotionKMPLibrary"
 
 pluginManagement {
     repositories {
