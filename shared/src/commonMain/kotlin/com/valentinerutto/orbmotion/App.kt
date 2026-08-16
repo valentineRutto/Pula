@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.valentinerutto.orbmotion.orbs.OrbState
+import com.valentinerutto.orbmotion.orbs.OrbTheme
 import com.valentinerutto.orbmotion.orbs.ThinkingOrb
 import com.valentinerutto.orbmotion.orbs.ThinkingOrbGallery
 import org.jetbrains.compose.resources.painterResource
@@ -33,7 +34,6 @@ import orbmotionkmplibrary.shared.generated.resources.compose_multiplatform
 fun App() {
     MaterialTheme {
 
-        var showContent by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier
@@ -44,20 +44,10 @@ fun App() {
         ) {
 
 
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-
-
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
@@ -67,7 +57,7 @@ fun App() {
                         }
 
                 }
-            }
+
 
 
         }

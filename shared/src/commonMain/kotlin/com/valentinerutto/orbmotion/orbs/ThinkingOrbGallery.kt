@@ -17,7 +17,7 @@ public fun ThinkingOrbGallery(
     modifier: Modifier = Modifier,
     size: OrbSize = OrbSize.Large,
     theme: OrbTheme = OrbTheme.Auto,
-): Unit {
+) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 96.dp),
         modifier = modifier,
