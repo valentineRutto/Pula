@@ -19,12 +19,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.unit.dp
 import com.valentinerutto.orbmotion.util.drawOrbState
 import com.valentinerutto.orbmotion.util.rememberOrbPhase
 
-import kotlin.math.*
 
 
 
@@ -53,9 +50,14 @@ fun ThinkingOrb(
     )
 
     val renderPhase = if (reducedMotion) state.staticPhase else animatedPhase
+    val accessibilityDescription = contentDescription ?: state.defaultDescription
 
-    Canvas(modifier = modifier.size(size.dp).semantics{role = Role.Image
-        this.contentDescription = contentDescription ?: stateDescription}){
+    Canvas(
+        modifier = modifier.size(size.dp).semantics {
+            role = Role.Image
+            this.contentDescription = accessibilityDescription
+        }
+    ) {
 
         drawOrbState(state = state,phase = renderPhase, color= dotColor, dotCount = size.dotCount, dotRadiusRatio = size.dotRadiusRatio)
 

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -21,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.valentinerutto.orbmotion.orbs.OrbState
 import com.valentinerutto.orbmotion.orbs.ThinkingOrb
+import com.valentinerutto.orbmotion.orbs.ThinkingOrbGallery
 import org.jetbrains.compose.resources.painterResource
 
 import orbmotionkmplibrary.shared.generated.resources.Res
@@ -61,11 +63,7 @@ fun App() {
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            ThinkingOrb(state = OrbState.Working, modifier = Modifier.size(56.dp))
-                            Spacer(Modifier.height(16.dp))
-                            ThinkingOrb(state = OrbState.Searching, modifier = Modifier.size(96.dp))
-                            Spacer(Modifier.height(16.dp))
-                            ThinkingOrb(state = OrbState.Solving, modifier = Modifier.size(96.dp))
+                            ThinkingOrbGallery(modifier = Modifier.fillMaxSize().padding(24.dp))
                         }
 
                 }
