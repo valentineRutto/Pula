@@ -3,10 +3,14 @@ package com.valentinerutto.orbmotion
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,6 +18,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.valentinerutto.orbmotion.orbs.OrbState
+import com.valentinerutto.orbmotion.orbs.ThinkingOrb
 import org.jetbrains.compose.resources.painterResource
 
 import orbmotionkmplibrary.shared.generated.resources.Res
@@ -33,9 +40,13 @@ fun App() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+
+
             Button(onClick = { showContent = !showContent }) {
                 Text("Click me!")
             }
+
+
             AnimatedVisibility(showContent) {
                 val greeting = remember { Greeting().greet() }
                 Column(
@@ -44,8 +55,23 @@ fun App() {
                 ) {
                     Image(painterResource(Res.drawable.compose_multiplatform), null)
                     Text("Compose: $greeting")
+
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            ThinkingOrb(state = OrbState.Working, modifier = Modifier.size(56.dp))
+                            Spacer(Modifier.height(16.dp))
+                            ThinkingOrb(state = OrbState.Searching, modifier = Modifier.size(96.dp))
+                            Spacer(Modifier.height(16.dp))
+                            ThinkingOrb(state = OrbState.Solving, modifier = Modifier.size(96.dp))
+                        }
+
                 }
             }
+
+
         }
     }
 }
