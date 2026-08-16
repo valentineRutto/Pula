@@ -14,7 +14,7 @@ package com.valentinerutto.orbmotion.orbs
  * @param defaultDescription accessibility label used when no explicit `contentDescription`
  * is supplied to [ThinkingOrb].
  */
-enum class OrbState(
+public enum class OrbState(
     internal val basePeriodMillis: Long,
     internal val staticPhase: Float,
     internal val defaultDescription: String
