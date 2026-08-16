@@ -16,14 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 
-import orbmotion.shared.generated.resources.Res
-import orbmotion.shared.generated.resources.compose_multiplatform
+import orbmotionkmplibrary.shared.generated.resources.Res
+import orbmotionkmplibrary.shared.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
+
         var showContent by remember { mutableStateOf(false) }
+
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.primaryContainer)
