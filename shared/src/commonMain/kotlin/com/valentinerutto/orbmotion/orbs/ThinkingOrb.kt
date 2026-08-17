@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -29,19 +30,29 @@ import com.valentinerutto.orbmotion.util.rememberOrbPhase
 fun ThinkingOrb(
     state: OrbState,
     modifier: Modifier = Modifier,
-   size: OrbSize = OrbSize.Large,
-    theme: OrbTheme = OrbTheme.Auto,
+    size: OrbSize = OrbSize.Large,
+    theme: OrbTheme = OrbTheme.Light ,
     speed: Float = 1f,
     paused: Boolean = false,
     reducedMotion: Boolean = false,
     contentDescription: String? = null,
+    dotColorOverride: Color? = null,
+    backgroundOverride: Color? = null,
 ) {
+
     val dark = when (theme) {
         OrbTheme.Auto -> isSystemInDarkTheme()
         OrbTheme.Dark -> true
         OrbTheme.Light -> false
     }
-    val dotColor = if (dark) LightDot else DarkDot
+
+
+    val themeBg = backgroundOverride ?: MaterialTheme.colorScheme.background
+    val themeDot = dotColorOverride ?: MaterialTheme.colorScheme.primary
+
+    val dotColor = if (dark) themeDot else themeDot
+    val dotRadiusRatio = when (size) { OrbSize.Small -> 0.024f; is OrbSize.Custom -> 0.033f; OrbSize.Large -> 0.045f }
+
 
     val animatedPhase = rememberOrbPhase(
         periodMillis = state.basePeriodMillis,
