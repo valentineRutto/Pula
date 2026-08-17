@@ -56,7 +56,7 @@ private fun DrawScope.drawWorking(
     val timeSeconds = phase * 3.2f
     val dots = ArrayList<Dot>()
 
-    val orbitCount = 3
+    val orbitCount = 12
     val trailPerOrbit = 40
     val particlesPerOrbit = 3
 
