@@ -3,12 +3,8 @@ package com.valentinerutto.orbmotion.util
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import com.valentinerutto.orbmotion.orbs.OrbSize
 import com.valentinerutto.orbmotion.orbs.OrbState
-import com.valentinerutto.orbmotion.orbs.OrbTheme
-import kotlin.collections.minusAssign
-import kotlin.collections.plusAssign
-import kotlin.compareTo
+
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
@@ -29,7 +25,7 @@ internal fun DrawScope.drawOrbState(
     val dotR = size.minDimension * dotRadiusRatio
 
     when (state) {
-        OrbState.Working -> drawWorking(cx, cy, r, dotR, color, phase, dotCount)
+        OrbState.Working -> drawWorking(cx, cy, color, phase)
         OrbState.Searching -> drawSearching(cx, cy, r, dotR, color, phase, dotCount)
         OrbState.Solving -> drawSolving(cx, cy, r, dotR, color, phase, dotCount)
         OrbState.Listening -> drawListening(cx, cy, r, dotR, color, phase, dotCount)
@@ -41,34 +37,78 @@ internal fun DrawScope.drawOrbState(
     }
 }
 
-    /** Particles on tilted orbits. */
-   private fun DrawScope.drawWorking(
-        cx: Float, cy: Float, r: Float, dotR: Float, color: Color, phase: Float, dotCount: Int,
-    ) {
-        val orbitCount = 3
-        val perOrbit = (dotCount / orbitCount).coerceAtLeast(6)
-        for (o in 0 until orbitCount) {
-            val tilt = PI.toFloat() / orbitCount * o + PI.toFloat() / 6f
-            val squash = 0.42f + 0.12f * o
-            val orbitR = r * (0.5f + 0.16f * o)
-            val direction = if (o % 2 == 0) 1f else -1f
-            val baseAngle = phase * TAU * direction + o * (TAU / orbitCount)
-            for (i in 0 until perOrbit) {
-                val a = baseAngle + TAU * i / perOrbit
-                val ex = cos(a) * orbitR
-                val ey = sin(a) * orbitR * squash
-                val x = ex * cos(tilt) - ey * sin(tilt)
-                val y = ex * sin(tilt) + ey * cos(tilt)
-                val depth = sin(a) * 0.5f + 0.5f
-                drawCircle(
-                    color = color,
-                    radius = dotR * (0.7f + 0.5f * depth),
-                    center = Offset(cx + x, cy + y),
-                    alpha = (0.3f + 0.7f * depth).coerceIn(0.15f, 1f),
-                )
-            }
+/**
+ * Port of thinking-orbs' `frameOrbits`: twelve deterministic 3D orbit planes,
+ * each represented by a faint dotted trail and three travelling particles.
+ */
+private fun DrawScope.drawWorking(
+    cx: Float,
+    cy: Float,
+    color: Color,
+    phase: Float,
+) {
+    // Simplified working animation constrained to perfect circles with a small radial oscillation.
+    data class Dot(val z: Float, val center: Offset, val radius: Float, val alpha: Float)
+
+    val sourceSize = size.minDimension
+    val baseRadius = sourceSize * 0.5f * 0.82f
+    val radiusScale = workingRadiusScale(sourceSize)
+    val timeSeconds = phase * 3.2f
+    val dots = ArrayList<Dot>()
+
+    val orbitCount = 3
+    val trailPerOrbit = 40
+    val particlesPerOrbit = 3
+
+    for (o in 0 until orbitCount) {
+        // concentric circular orbits
+        val orbitR = baseRadius * (0.6f + 0.15f * o)
+        val direction = if (o % 2 == 0) 1f else -1f
+        val speed = 1f + 0.12f * o
+        val baseAngle = timeSeconds * speed * direction
+
+        // small amplitude radial oscillation to create the 'inside a perfect circle' effect
+        val oscillationAmp = orbitR * 0.08f * (1f + 0.08f * o)
+
+        // trailing dots
+        for (i in 0 until trailPerOrbit) {
+            val a = baseAngle + TAU * i / trailPerOrbit
+            val radialOsc = kotlin.math.sin(a * (1f + 0.2f * o) - phase * TAU * 0.5f) * oscillationAmp
+            val radius = orbitR + radialOsc
+            val x = cos(a) * radius
+            val y = sin(a) * radius
+            val depth = (sin(a) * 0.5f + 0.5f)
+            dots += Dot(
+                z = depth,
+                center = Offset(cx + x, cy + y),
+                radius = (0.9f * radiusScale).coerceAtLeast(0.3f),
+                alpha = 0.28f * 0.5f * (0.4f + 0.6f * depth),
+            )
+        }
+
+        // moving particles
+        for (p in 0 until particlesPerOrbit) {
+            val a = baseAngle + timeSeconds * (0.6f + 0.1f * o) + p.toFloat() / particlesPerOrbit * TAU
+            val radialOsc = kotlin.math.sin(a * (1f + 0.2f * o) - phase * TAU * 0.5f) * oscillationAmp
+            val radius = orbitR + radialOsc
+            val x = cos(a) * radius
+            val y = sin(a) * radius
+            val depth = (sin(a) * 0.5f + 0.5f)
+            dots += Dot(
+                z = depth,
+                center = Offset(cx + x, cy + y),
+                radius = ((1.2f + 1.6f * depth) * radiusScale).coerceAtLeast(0.3f),
+                alpha = 0.78f + 0.22f * depth,
+            )
         }
     }
+
+    // draw back-to-front based on depth
+    dots.sortBy { it.z }
+    dots.forEach { dot ->
+        drawCircle(color = color, radius = dot.radius, center = dot.center, alpha = dot.alpha)
+    }
+}
 /** A scan meridian sweeping a dotted globe. */
 private fun DrawScope.drawSearching(
     cx: Float, cy: Float, r: Float, dotR: Float, color: Color, phase: Float, dotCount: Int,
@@ -250,4 +290,3 @@ private fun angularDistance(a: Float, b: Float): Float {
     if (d < -PI) d += TAU
     return abs(d)
 }
-
