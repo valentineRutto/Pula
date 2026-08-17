@@ -137,4 +137,51 @@ internal fun pointOnMorphedShape(t: Float, morph: Float): Offset {
 private fun lerp(a: Offset, b: Offset, t: Float): Offset =
     Offset(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t)
 
+/////////////
+internal data class Dot(
+    val x: Float,
+    val y: Float,
+    val z: Float,
+    val r: Float,
+    val whiteness: Float,
+    val alpha: Float = 1f,
+)
+internal fun hashD(seed: Int, salt: Float): Float {
+    val v = kotlin.math.sin(seed * 12.9898f + salt * 78.233f) * 43758.5453f
+    return v - kotlin.math.floor(v)
+}
+internal fun makeProj(
+    rotY: Float,
+    rotX: Float,
+    cx: Float,
+    cy: Float,
+    scale: Float,
+): (Float, Float, Float) -> Triple<Float, Float, Float> {
+    val cosY = cos(rotY); val sinY = sin(rotY)
+    val cosX = cos(rotX); val sinX = sin(rotX)
+    return proj@{ x, y, z ->
+        // rotate around Y
+        val x1 = x * cosY + z * sinY
+        val z1 = -x * sinY + z * cosY
+        // rotate around X
+        val y2 = y * cosX - z1 * sinX
+        val z2 = y * sinX + z1 * cosX
+        Triple(cx + x1 * scale, cy + y2 * scale, z2)
+    }
+}
+
+internal fun radiusScale(sizePx: Float, pow: Float): Float =
+    (sizePx / 64f).coerceAtLeast(0.05f).pow(pow)
+
+/**
+ * Applies the radius floor [rMin] (dots never render smaller than this) and returns the
+ * dots sorted back-to-front by depth, so drawing them in order is a correct painter's
+ * algorithm — far dots first, near dots painted on top.
+ */
+internal fun finalizeFrame(dots: List<Dot>, rMin: Float?): List<Dot> {
+    val floor = rMin ?: 0f
+    return dots
+        .map { if (floor > 0f && it.r < floor) it.copy(r = floor) else it }
+        .sortedBy { it.z }
+}
 
