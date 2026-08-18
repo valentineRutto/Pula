@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,6 +19,8 @@ public fun ThinkingOrbGallery(
     size: OrbSize = OrbSize.Large,
     theme: OrbTheme = OrbTheme.Auto,
     speed: Float = 1f,
+    dotColorOverride: Color? = null,
+    backgroundOverride: Color? = null,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 96.dp),
@@ -30,7 +33,14 @@ public fun ThinkingOrbGallery(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(8.dp),
             ) {
-                ThinkingOrb(state = state, size = size, theme = theme, speed = speed)
+                ThinkingOrb(
+                    state = state,
+                    size = size,
+                    theme = theme,
+                    speed = speed,
+                    dotColorOverride = dotColorOverride,
+                    backgroundOverride = backgroundOverride,
+                )
                 Text(text = state.name)
             }
         }
