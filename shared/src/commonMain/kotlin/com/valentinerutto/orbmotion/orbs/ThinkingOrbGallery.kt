@@ -17,6 +17,7 @@ public fun ThinkingOrbGallery(
     modifier: Modifier = Modifier,
     size: OrbSize = OrbSize.Large,
     theme: OrbTheme = OrbTheme.Auto,
+    speed: Float = 1f,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 96.dp),
@@ -29,7 +30,7 @@ public fun ThinkingOrbGallery(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(8.dp),
             ) {
-                ThinkingOrb(state = state, size = size, theme = theme)
+                ThinkingOrb(state = state, size = size, theme = theme, speed = speed)
                 Text(text = state.name)
             }
         }
