@@ -6,8 +6,8 @@ package com.valentinerutto.orbmotion.orbs
  * The state vocabulary and overall dotted, monochrome look are inspired by Jakub Antalik's
  * **Thinking Orbs** (https://orbs.jakubantalik.com, MIT licensed) — full credit in this
  * module's README. This is an independent Compose Multiplatform implementation: the drawing
- * code below was written from scratch against Compose's [androidx.compose.ui.graphics.drawscope.DrawScope],
- * not ported from the original canvas source.
+ * code below was written from scratch against C * not ported from the original canvas source.
+ * ompose's [androidx.compose.ui.graphics.drawscope.DrawScope],
  *
  * @param basePeriodMillis length of one full animation loop at `speed = 1f`.
  * @param staticPhase the representative frame rendered when `reducedMotion = true`.

@@ -1,21 +1,33 @@
 # OrbsMotion-kmp
 
-Animated, monochrome "thinking orb" loading indicators for AI / agent UIs — built for
-**Kotlin Compose Multiplatform** (Android, iOS).
+Animated, monochrome “thinking orb” indicators for AI and agent UIs — built with **Kotlin Compose Multiplatform** for Android and iOS.
 
-## Credit
+## Credit & Attribution
 
-This library's visual language and state vocabulary (`working`, `searching`, `solving`,
-`listening`, `composing`, `shaping`, `breathing`, `connecting`, `weaving`) are inspired by
-**[Thinking Orbs](https://orbs.jakubantalik.com)** by **Jakub Antalik** — a dotted, canvas-based
-web component ([source](https://github.com/Jakubantalik/thinking-orbs), MIT licensed).
+**OrbsMotion-kmp is an unofficial Kotlin/Compose Multiplatform port of [Thinking Orbs](https://orbs.jakubantalik.com) by [Jakub Antalik](https://github.com/Jakubantalik).**
 
-All credit for the original concept and design goes to Jakub Antalik. This repository is an
-independent Kotlin/Compose implementation written from scratch against Compose's `DrawScope`
-API — no code from the original TypeScript/canvas source was copied. If you're on the web,
-use [the original](https://orbs.jakubantalik.com) instead.
+The original *Thinking Orbs* is a dotted, canvas-based web animation library featuring expressive states such as `working`, `searching`, `solving`, `listening`, `composing`, and `shaping`.
+
+This project ports the original animation concepts and implementations from JavaScript/Canvas to **Kotlin and Compose Multiplatform**, adapting the rendering and animation logic to Compose's `Canvas` and `DrawScope` APIs.
+
+Original project:
+
+* **Thinking Orbs:** https://orbs.jakubantalik.com
+* **Source:** https://github.com/Jakubantalik/thinking-orbs
+* **Author:** Jakub Antalik
+* **License:** MIT
+
+Additional states in this port include `breathing`, `connecting`, and `weaving`.
+
+**Original animation design and implementation:** © Jakub Antalik
+**Kotlin/Compose Multiplatform port:** © Valentine Rutto
+
+This project is **not affiliated with or endorsed by Jakub Antalik**.
+
+If you're building for the web, please use the [original Thinking Orbs implementation](https://orbs.jakubantalik.com).
 
 ## License
 
-MIT © Valentine Rutto — see [`LICENSE`](../LICENSE). The original *Thinking Orbs* web library
-is MIT © Jakub Antalik.
+MIT © Valentine Rutto — see [`LICENSE`](LICENSE).
+
+The original *Thinking Orbs* project is MIT © Jakub Antalik. The original MIT license and required copyright notice are preserved in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
