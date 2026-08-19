@@ -56,17 +56,21 @@ fun App() {
 
                                     // Controls
                                     Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+
                                         Text(text = "Speed: ${"%.2f".format(speed)}x")
+
                                         androidx.compose.material3.Slider(value = speed, onValueChange = { speed = it }, valueRange = 0.25f..2f)
 
                                         Spacer(modifier = Modifier.height(8.dp))
 
                                         Text(text = "Size")
+
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             androidx.compose.material3.Button(onClick = { sizeMode = 0 }) { Text("Small") }
                                             androidx.compose.material3.Button(onClick = { sizeMode = 1 }) { Text("Custom") }
                                             androidx.compose.material3.Button(onClick = { sizeMode = 2 }) { Text("Large") }
                                         }
+
                                         if (sizeMode == 1) {
                                             Spacer(modifier = Modifier.height(8.dp))
                                             Text(text = "Custom size: ${customSize.toInt()} dp")
@@ -76,18 +80,22 @@ fun App() {
                                         Spacer(modifier = Modifier.height(8.dp))
 
                                         Text(text = "Theme")
+
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             androidx.compose.material3.Button(onClick = { theme = OrbTheme.Auto }) { Text("Auto") }
                                             androidx.compose.material3.Button(onClick = { theme = OrbTheme.Light }) { Text("Light") }
                                             androidx.compose.material3.Button(onClick = { theme = OrbTheme.Dark }) { Text("Dark") }
                                         }
+
                                     }
 
                                     // Determine selected OrbSize
                                     val orbSize = when (sizeMode) {
+
                                         0 -> com.valentinerutto.orbmotion.orbs.OrbSize.Small
                                         2 -> com.valentinerutto.orbmotion.orbs.OrbSize.Large
                                         else -> com.valentinerutto.orbmotion.orbs.OrbSize.Custom(customSize.dp)
+
                                     }
 
                                     Column(

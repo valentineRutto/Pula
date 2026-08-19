@@ -32,14 +32,13 @@ internal fun DrawScope.drawOrbState(
         OrbState.Composing -> drawComposing(cx, cy, r, dotR, color, phase, dotCount)
         OrbState.Shaping -> drawShaping(cx, cy, r, dotR, color, phase, dotCount)
         OrbState.Breathing -> drawBreathing(cx, cy, r, dotR, color, phase, dotCount)
-       // OrbState.Connecting -> drawConnecting(cx, cy, r, dotR, color, phase, dotCount)
+        OrbState.Connecting -> drawConnecting(cx, cy, r, dotR, color, phase, dotCount)
         OrbState.Weaving -> drawWeaving(cx, cy, r, dotR, color, phase, dotCount)
-        else -> {}
     }
 }
 
 /**
- * Port of thinking-orbs `frameOrbits`: twelve deterministic 3D orbit planes,
+ * Port of thinking-orbs' `frameOrbits`: twelve deterministic 3D orbit planes,
  * each represented by a faint dotted trail and three travelling particles.
  */
 private fun DrawScope.drawWorking(
@@ -48,54 +47,49 @@ private fun DrawScope.drawWorking(
     color: Color,
     phase: Float,
 ) {
-    // inside DrawScope.drawWorking(cx, cy, color, phase)
+    data class Dot(val z: Float, val center: Offset, val radius: Float, val alpha: Float)
+
     val sourceSize = size.minDimension
-    val baseRadius = sourceSize * 0.5f * 0.82f
+    val orbitRadius = sourceSize * 0.5f * 0.82f
     val radiusScale = workingRadiusScale(sourceSize)
     val timeSeconds = phase * 3.2f
+    val projector = WorkingOrbitProjector(cx, cy, timeSeconds)
+    val dots = ArrayList<Dot>(12 * (40 + 3))
 
-    val proj = makeProj(rotY = timeSeconds * 0.12f, rotX = 0.3f, cx = cx, cy = cy, scale = 1f)
+    for (orbit in 0 until 12) {
+        val plane = workingOrbit(orbit, orbitRadius)
 
-    val dots = ArrayList<Dot>()
-
-    val orbitCount = 12
-    val trailPerOrbit = 40
-    val particlesPerOrbit = 6
-
-    for (orbit in 0 until orbitCount) {
-        val plane = workingOrbit(orbit, baseRadius)
-
-        // trails
-        for (t in 0 until trailPerOrbit) {
-            val angle = t.toFloat() / trailPerOrbit * TAU
-            val src = plane.pointAt(angle)              // 3D point on that plane (x,y,z) scaled by plane.radius
-            val (sx, sy, sz) = proj(src.x, src.y, src.z) // project to screen + rotated Z
-            val depth = (sz / plane.radius + 1f) * 0.5f
-            val r = (0.9f * radiusScale).coerceAtLeast(0.3f)
-            val whiteness = 0.4f + 0.6f * depth // tune: near dots darker (lower whiteness)
-            val alpha = 0.28f * 0.5f * (0.4f + 0.6f * depth) // ghost alpha formula used in port
-            dots += Dot(x = sx, y = sy, z = sz, r = r, whiteness = whiteness, alpha = alpha)
+        for (trailDot in 0 until 40) {
+            val angle = trailDot.toFloat() / 40f * TAU
+            val sourcePoint = plane.pointAt(angle)
+            val point = projector.project(sourcePoint.x, sourcePoint.y, sourcePoint.z)
+            val depth = (point.z / plane.radius + 1f) * 0.5f
+            dots += Dot(
+                z = point.z,
+                center = Offset(point.x, point.y),
+                radius = (0.9f * radiusScale).coerceAtLeast(0.3f),
+                alpha = 0.28f * 0.5f * (0.4f + 0.6f * depth),
+            )
         }
 
-        // moving particles
-        for (p in 0 until particlesPerOrbit) {
-            val angle = timeSeconds * plane.speed + p.toFloat() / particlesPerOrbit * TAU + plane.phaseOffset
-            val src = plane.pointAt(angle)
-            val (sx, sy, sz) = proj(src.x, src.y, src.z)
-            val depth = (sz / plane.radius + 1f) * 0.5f
-            val r = ((1.2f + 1.6f * depth) * radiusScale).coerceAtLeast(0.3f)
-            val alpha = 0.78f + 0.22f * depth
-            val whiteness = 0f // particles are bright (near-inked)
-            dots += Dot(x = sx, y = sy, z = sz, r = r, whiteness = whiteness, alpha = alpha)
+        for (particle in 0 until 3) {
+            val angle = timeSeconds * plane.speed + particle.toFloat() / 3f * TAU + plane.phaseOffset
+            val sourcePoint = plane.pointAt(angle)
+            val point = projector.project(sourcePoint.x, sourcePoint.y, sourcePoint.z)
+            val depth = (point.z / plane.radius + 1f) * 0.5f
+            dots += Dot(
+                z = point.z,
+                center = Offset(point.x, point.y),
+                radius = ((1.2f + 1.6f * depth) * radiusScale).coerceAtLeast(0.3f),
+                alpha = 0.78f + 0.22f * depth,
+            )
         }
     }
 
-    val frame = finalizeFrame(dots, rMin = 0.3f)
-    for (dot in frame) {
-        val drawAlpha = dot.alpha * (1f - dot.whiteness) // fold whiteness -> alpha
-        drawCircle(color = color, radius = dot.r, center = Offset(dot.x, dot.y), alpha = drawAlpha)
+    dots.sortBy { it.z }
+    dots.forEach { dot ->
+        drawCircle(color = color, radius = dot.radius, center = dot.center, alpha = dot.alpha)
     }
-
 }
 /** A scan meridian sweeping a dotted globe. */
 private fun DrawScope.drawSearching(
